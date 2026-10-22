@@ -2,8 +2,8 @@
 **Materia:** Lenguajes y Autómatas II (SCD-1016)  
 **Tema:** Encuadre, Diagnóstico de Punteros y Metodología IA  
 **Docente Titular:** MCC. Iván Márquez Larios (`ijmarquezl`)  
-**Estudiante:** [Nombre Completo]  
-**Matrícula:** [No. de Control]  
+**Estudiante:** Leslie Tamara Canul LLanes  
+**Matrícula:** 24531370 
 **Track:** [ C | Rust ]  
 
 ---
@@ -11,7 +11,7 @@
 ## 1. Fase 1: El Artesano (Dificultad Manual)
 *Reto:* Inversión de buffer in-place (char*)  
 *Describe qué problema o restricción de memoria/sintaxis identificaste al codificar a mano:*
-> 
+> Al realizar la función manualmente, comprendí que una cadena en C se guarda en un espacio de memoria llamado buffer y que cada carácter ocupa una posición. Mi dificultad fue controlar los índices para intercambiar los caracteres sin salir de los límites de la cadena. También tuve que considerar el carácter nulo `\0`, que indica dónde termina el texto, y evitar errores cuando la cadena está vacía o el puntero es NULL. Para resolverlo, utilicé dos índices y una variable temporal, modificando la misma cadena sin reservar memoria adicional.
 
 ---
 
