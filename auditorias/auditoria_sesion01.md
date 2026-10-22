@@ -27,13 +27,14 @@
 
 ### 2.2 Prompt Estructurado
 ```text
- Estoy realizando una práctica de Lenguajes y Autómatas II sobre el manejo de punteros y memoria en C. Debo implementar una función que invierta una cadena en su mismo espacio de memoria.
+Estoy realizando una práctica de Lenguajes y Autómatas II sobre el manejo de punteros y memoria en C. Debo implementar una función que invierta una cadena en su mismo espacio de memoria.
 
 Rol: Actúa como un ingeniero de software especializado en programación de sistemas y compiladores.
 
 Especificación: Implementa la función void invertir(char *s); respetando exactamente esa firma. La función debe invertir los caracteres de una cadena modificable sin crear una copia, sin utilizar malloc() y sin emplear arreglos auxiliares. Utiliza dos índices, uno al inicio y otro al final, y una variable temporal de tipo char para intercambiar los caracteres. Comprueba si el puntero es NULL y maneja correctamente la cadena vacía. No debes modificar el carácter nulo que marca el final de la cadena. El código debe compilar con gcc -std=c11 -Wall -Wextra -Werror y no debe incluir una función main(). La complejidad esperada es O(n) en tiempo y O(1) en memoria adicional.
 
 Output: Devuelve la implementación completa de la función, lista para guardarse en ia_sesion01_c.c, e incluye una explicación breve de cómo funciona y de su complejidad.
+
 ```
 
 ---
