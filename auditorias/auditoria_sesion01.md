@@ -27,7 +27,7 @@
 
 ### 2.2 Prompt Estructurado
 ```text
-Contexto: Estoy realizando una práctica de Lenguajes y Autómatas II sobre el manejo de punteros y memoria en C. Debo implementar una función que invierta una cadena en su mismo espacio de memoria.
+Estoy realizando una práctica de Lenguajes y Autómatas II sobre el manejo de punteros y memoria en C. Debo implementar una función que invierta una cadena en su mismo espacio de memoria.
 
 Rol: Actúa como un ingeniero de software especializado en programación de sistemas y compiladores.
 
@@ -37,38 +37,11 @@ Output: Devuelve la implementación completa de la función, lista para guardars
 
 ---
 
-
 ## 3. Código Devuelto por el Modelo
 ```c
 // Código devuelto por el LLM
 ```
-#include "api_sesion01.h"
-#include <stddef.h>
-#include <string.h>
 
-void invertir(char *s) {
-    if (s == NULL) {
-        return;
-    }
-
-    size_t inicio = 0;
-    size_t fin = strlen(s);
-
-    if (fin == 0) {
-        return;
-    }
-
-    fin--;
-
-    while (inicio < fin) {
-        char temporal = s[inicio];
-        s[inicio] = s[fin];
-        s[fin] = temporal;
-
-        inicio++;
-        fin--;
-    }
-}
 ---
 
 ## 4. Fase 3: El Auditor (Resultados del Test Harness)
