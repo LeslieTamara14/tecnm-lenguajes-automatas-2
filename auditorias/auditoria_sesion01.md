@@ -87,9 +87,25 @@ La función modifica el buffer original, no utiliza malloc() ni crea arreglos au
 * [ ] No existen accesos fuera de límites ni *Memory Leaks*.
 * [ ] La complejidad teórica coincide con la implementada.
 
+Salida esperada del harness
+
+=== AUDITORIA SESION 01 - Inversion de buffer in-place ===
+Caso                               esperado:              obtenido:              resultado
+[ 1] invertir("HOLA")                   esperado: ALOH         obtenido: ALOH         OK
+[ 2] invertir("abc")                    esperado: cba          obtenido: cba          OK
+[ 3] invertir("")                       esperado:              obtenido:              OK
+[ 4] invertir("AB")                     esperado: BA           obtenido: BA           OK
+[ 5] invertir("a")                      esperado: a            obtenido: a            OK
+[ 6] invertir(NULL)                     esperado: sin crash    obtenido: sin crash    OK
+
+RESULTADO: 6/6 pruebas superadas
+TODO EN VERDE. Documenta tu auditoria en auditorias/auditoria_sesion01.md
+
 ### Reporte Crítico
 *¿Qué caso borde o problema omitió la IA y cómo lo solucionaste?*
-> 
+> Al revisar el código de la IA, presté atención al manejo de los casos límite. El puntero NULL debe comprobarse antes de utilizar strlen(), porque intentar calcular la longitud de una dirección nula puede provocar un error. También es importante revisar la cadena vacía, ya que restar uno a su longitud sin comprobarla podría producir un índice incorrecto. La solución incluye comprobaciones para ambos casos antes de comenzar los intercambios.
+
+> El harness permite verificar que la función trabaje con cadenas de diferentes longitudes y que no falle con los casos especiales. Esta prueba también me ayudó a comprender que no basta con que el código parezca correcto: es necesario compilarlo y ejecutar las pruebas para comprobar su funcionamiento.
 
 ---
-**Firma digital:** [Usuario de GitHub]
+**Firma digital:** LeslieTamara14
