@@ -11,7 +11,7 @@
 ## 1. Fase 1: El Artesano (Dificultad Manual)
 *Reto:* Inversión de buffer in-place (char*)  
 *Describe qué problema o restricción de memoria/sintaxis identificaste al codificar a mano:*
-> Al realizar la función manualmente, comprendí que una cadena en C se guarda en un espacio de memoria llamado buffer y que cada carácter ocupa una posición. Mi dificultad fue controlar los índices para intercambiar los caracteres sin salir de los límites de la cadena. También tuve que considerar el carácter nulo `\0`, que indica dónde termina el texto, y evitar errores cuando la cadena está vacía o el puntero es NULL. Para resolverlo, utilicé dos índices y una variable temporal, modificando la misma cadena sin reservar memoria adicional.
+> Al realizar la función manualmente, identifiqué que debía recorrer la cadena desde el inicio y desde el final para intercambiar los caracteres. La dificultad fue controlar los índices para no salir de los límites del buffer. También debía tener en cuenta el carácter nulo \0, que indica el final de una cadena en C, y comprobar que la función no fallara cuando recibiera un puntero NULL o una cadena vacía. Para resolverlo, utilicé dos índices y una variable temporal, sin crear otra cadena ni reservar memoria adicional.
 
 ---
 
@@ -27,15 +27,45 @@
 
 ### 2.2 Prompt Estructurado
 ```text
-[Pega aquí el prompt formal que redactaste para la IA]
-```
+Contexto: Estoy realizando una práctica de Lenguajes y Autómatas II sobre el manejo de punteros y memoria en C. Debo implementar una función que invierta una cadena en su mismo espacio de memoria.
+
+Rol: Actúa como un ingeniero de software especializado en programación de sistemas y compiladores.
+
+Especificación: Implementa la función void invertir(char *s); respetando exactamente esa firma. La función debe invertir los caracteres de una cadena modificable sin crear una copia, sin utilizar malloc() y sin emplear arreglos auxiliares. Utiliza dos índices, uno al inicio y otro al final, y una variable temporal de tipo char para intercambiar los caracteres. Comprueba si el puntero es NULL y maneja correctamente la cadena vacía. No debes modificar el carácter nulo que marca el final de la cadena. El código debe compilar con gcc -std=c11 -Wall -Wextra -Werror y no debe incluir una función main(). La complejidad esperada es O(n) en tiempo y O(1) en memoria adicional.
+
+Output: Devuelve la implementación completa de la función, lista para guardarse en ia_sesion01_c.c, e incluye una explicación breve de cómo funciona y de su complejidad.```
 
 ---
 
 ## 3. Código Devuelto por el Modelo
 ```c
-// Código devuelto por el LLM
-```
+#include "api_sesion01.h"
+#include <stddef.h>
+#include <string.h>
+
+void invertir(char *s) {
+    if (s == NULL) {
+        return;
+    }
+
+    size_t inicio = 0;
+    size_t fin = strlen(s);
+
+    if (fin == 0) {
+        return;
+    }
+
+    fin--;
+
+    while (inicio < fin) {
+        char temporal = s[inicio];
+        s[inicio] = s[fin];
+        s[fin] = temporal;
+
+        inicio++;
+        fin--;
+    }
+}```
 
 ---
 
