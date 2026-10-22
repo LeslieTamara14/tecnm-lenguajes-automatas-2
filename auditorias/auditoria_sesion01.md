@@ -37,8 +37,11 @@ Output: Devuelve la implementación completa de la función, lista para guardars
 
 ---
 
+
 ## 3. Código Devuelto por el Modelo
 ```c
+// Código devuelto por el LLM
+```
 #include "api_sesion01.h"
 #include <stddef.h>
 #include <string.h>
@@ -65,8 +68,7 @@ void invertir(char *s) {
         inicio++;
         fin--;
     }
-}```
-
+}
 ---
 
 ## 4. Fase 3: El Auditor (Resultados del Test Harness)
