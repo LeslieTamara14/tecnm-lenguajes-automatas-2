@@ -87,7 +87,16 @@ La función modifica el buffer original, no utiliza malloc() ni crea arreglos au
 * [ ] No existen accesos fuera de límites ni *Memory Leaks*.
 * [ ] La complejidad teórica coincide con la implementada.
 
-Salida esperada del harness
+Se comprueba que la cadena original quede invertida.
+
+Se verifica que las cadenas vacías y los punteros NULL no provoquen un fallo.
+
+Se revisa que no se utilice memoria dinámica ni arreglos auxiliares.
+
+Se comprueba que el código compile sin advertencias utilizando las opciones solicitadas.
+
+
+**Salida esperada del harness:** 
 
 === AUDITORIA SESION 01 - Inversion de buffer in-place ===
 Caso                               esperado:              obtenido:              resultado
