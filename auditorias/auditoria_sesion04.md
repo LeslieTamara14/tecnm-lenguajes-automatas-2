@@ -2,8 +2,8 @@
 **Materia:** Lenguajes y Autómatas II (SCD-1016)  
 **Tema:** Anatomía de un Árbol Sintáctico (AST)  
 **Docente Titular:** MCC. Iván Márquez Larios (`ijmarquezl`)  
-**Estudiante:** [Nombre Completo]  
-**Matrícula:** [No. de Control]  
+**Estudiante:** Canul Llanes Leslie Tamara
+**Matrícula:** 24531370 
 **Track:** [ C | Rust ]  
 
 ---
