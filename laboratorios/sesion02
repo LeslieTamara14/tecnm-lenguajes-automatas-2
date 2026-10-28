@@ -3,7 +3,17 @@
     {
       "cell_type": "markdown",
       "metadata": {
-        "id": "aeRDMA_Fn4p4"
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/LeslieTamara14/tecnm-lenguajes-automatas-2/blob/main/laboratorios/sesion02\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "j9Y9jTM2uiND"
       },
       "source": [
         "# Lenguajes y Autómatas II (SCD-1016)\n",
@@ -27,7 +37,7 @@
     {
       "cell_type": "markdown",
       "metadata": {
-        "id": "7onfTlT6n4p6"
+        "id": "xTzE0Xv5uiNF"
       },
       "source": [
         "## 1. ¿Qué vas a construir?\n",
@@ -44,7 +54,7 @@
     {
       "cell_type": "markdown",
       "metadata": {
-        "id": "RakkzE4nn4p7"
+        "id": "a0_SVomGuiNF"
       },
       "source": [
         "## 2. El contrato exacto\n",
@@ -74,7 +84,7 @@
     {
       "cell_type": "markdown",
       "metadata": {
-        "id": "SF9P84Udn4p8"
+        "id": "Qa7-nyfVuiNG"
       },
       "source": [
         "## 3. Cómo se califica\n",
@@ -120,7 +130,7 @@
     {
       "cell_type": "markdown",
       "metadata": {
-        "id": "GdtzASwOn4p9"
+        "id": "yMxXgBH5uiNG"
       },
       "source": [
         "## Paso 0 · Entorno\n"
@@ -128,11 +138,24 @@
     },
     {
       "cell_type": "code",
-      "execution_count": null,
+      "execution_count": 8,
       "metadata": {
-        "id": "sBAY7TY2n4p9"
+        "id": "QGPMTQwUuiNG",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "5a21ca80-f7c1-40e0-a15e-ec97a0459954"
       },
-      "outputs": [],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "✅ Entorno listo:\n",
+            "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\n"
+          ]
+        }
+      ],
       "source": [
         "import os\n",
         "\n",
@@ -147,7 +170,7 @@
     {
       "cell_type": "markdown",
       "metadata": {
-        "id": "uNHJFri8n4p_"
+        "id": "-01oEfQ3uiNH"
       },
       "source": [
         "## Fase 1 · El Artesano (15 min, sin IA)\n",
@@ -161,11 +184,23 @@
     },
     {
       "cell_type": "code",
-      "execution_count": null,
+      "execution_count": 9,
       "metadata": {
-        "id": "woCZBN9On4p_"
+        "id": "SSwZ3GTvuiNI",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "1a5b7db9-742c-4d44-8620-a2b767ffe1d2"
       },
-      "outputs": [],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Overwriting api_sesion02.h\n"
+          ]
+        }
+      ],
       "source": [
         "%%writefile api_sesion02.h\n",
         "/* api_sesion02.h - contrato de la Sesion 02\n",
@@ -191,11 +226,23 @@
     },
     {
       "cell_type": "code",
-      "execution_count": null,
+      "execution_count": 10,
       "metadata": {
-        "id": "sO44HHaVn4qA"
+        "id": "y73ijn95uiNI",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "53061b3d-e819-49ac-a28d-3d2fd2edb986"
       },
-      "outputs": [],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Overwriting artesano_sesion02_c.c\n"
+          ]
+        }
+      ],
       "source": [
         "%%writefile artesano_sesion02_c.c\n",
         "/* artesano_sesion02_c.c - Fase 1: El Artesano (sin IA)\n",
@@ -205,28 +252,62 @@
         " * El harness compila este archivo junto con el suyo: no escribas main().\n",
         " */\n",
         "#include \"api_sesion02.h\"\n",
-        "#include <stdio.h>\n",
+        "#include <stdlib.h>\n",
         "#include <string.h>\n",
         "\n",
-        "NodoToken *agregar_token(NodoToken *cabeza, const char *lexema) {\n",
-        "    (void)lexema; /* TODO: reserva el nodo, copia el lexema y enlazalo al final */\n",
+        "NodoToken *agregar_token(NodoToken *cabeza, const char *lexema)\n",
+        "{\n",
+        "    NodoToken *nuevo = malloc(sizeof(NodoToken));\n",
+        "\n",
+        "    if (nuevo == NULL) {\n",
+        "        return cabeza;\n",
+        "    }\n",
+        "\n",
+        "    strncpy(nuevo->lexema, lexema, sizeof(nuevo->lexema) - 1);\n",
+        "    nuevo->lexema[sizeof(nuevo->lexema) - 1] = '\\0';\n",
+        "    nuevo->siguiente = NULL;\n",
+        "\n",
+        "    if (cabeza == NULL) {\n",
+        "        return nuevo;\n",
+        "    }\n",
+        "\n",
+        "    NodoToken *actual = cabeza;\n",
+        "\n",
+        "    while (actual->siguiente != NULL) {\n",
+        "        actual = actual->siguiente;\n",
+        "    }\n",
+        "\n",
+        "    actual->siguiente = nuevo;\n",
+        "\n",
         "    return cabeza;\n",
         "}\n",
         "\n",
-        "int contar_tokens(NodoToken *cabeza) {\n",
-        "    (void)cabeza; /* TODO: recorre la lista contando nodos */\n",
-        "    return 0;\n",
+        "int contar_tokens(NodoToken *cabeza)\n",
+        "{\n",
+        "    int contador = 0;\n",
+        "\n",
+        "    while (cabeza != NULL) {\n",
+        "        contador++;\n",
+        "        cabeza = cabeza->siguiente;\n",
+        "    }\n",
+        "\n",
+        "    return contador;\n",
         "}\n",
         "\n",
-        "void liberar_lista(NodoToken *cabeza) {\n",
-        "    (void)cabeza; /* TODO: libera sin perder el puntero al siguiente */\n",
-        "}\n"
+        "void liberar_lista(NodoToken *cabeza)\n",
+        "{\n",
+        "    while (cabeza != NULL) {\n",
+        "        NodoToken *siguiente = cabeza->siguiente;\n",
+        "        free(cabeza);\n",
+        "        cabeza = siguiente;\n",
+        "    }\n",
+        "}"
       ]
     },
     {
       "cell_type": "markdown",
       "metadata": {
-        "id": "ZFssi8PLn4qA"
+        "id": "J1kFuHEPuiNJ"
       },
       "source": [
         "## Fase 2 · El Científico (10 min)\n",
@@ -239,11 +320,23 @@
     },
     {
       "cell_type": "code",
-      "execution_count": null,
+      "execution_count": 11,
       "metadata": {
-        "id": "PzcFPqiCn4qB"
+        "id": "rE37jK_3uiNJ",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "409dd447-7106-42f9-95d9-bb40cf1486d0"
       },
-      "outputs": [],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Overwriting ia_sesion02_c.c\n"
+          ]
+        }
+      ],
       "source": [
         "%%writefile ia_sesion02_c.c\n",
         "/* ia_sesion02_c.c - Fase 2: El Cientifico\n",
@@ -253,13 +346,77 @@
         " */\n",
         "#include \"api_sesion02.h\"\n",
         "\n",
-        "/* TODO: pega aqui la propuesta de la IA */\n"
+        "\n",
+        "#include \"api_sesion02.h\"\n",
+        "#include <stdlib.h>\n",
+        "#include <string.h>\n",
+        "\n",
+        "NodoToken *crear_nodo(const char *lexema) {\n",
+        "    NodoToken *nuevo = malloc(sizeof(NodoToken));\n",
+        "\n",
+        "    if (nuevo == NULL) {\n",
+        "        return NULL;\n",
+        "    }\n",
+        "\n",
+        "    if (lexema == NULL) {\n",
+        "        nuevo->lexema[0] = '\\0';\n",
+        "    } else {\n",
+        "        strncpy(nuevo->lexema, lexema, sizeof(nuevo->lexema) - 1);\n",
+        "        nuevo->lexema[sizeof(nuevo->lexema) - 1] = '\\0';\n",
+        "    }\n",
+        "\n",
+        "    nuevo->siguiente = NULL;\n",
+        "    return nuevo;\n",
+        "}\n",
+        "\n",
+        "void agregar_token(NodoToken **cabeza, const char *lexema) {\n",
+        "    if (cabeza == NULL) {\n",
+        "        return;\n",
+        "    }\n",
+        "\n",
+        "    NodoToken *nuevo = crear_nodo(lexema);\n",
+        "    if (nuevo == NULL) {\n",
+        "        return;\n",
+        "    }\n",
+        "\n",
+        "    if (*cabeza == NULL) {\n",
+        "        *cabeza = nuevo;\n",
+        "        return;\n",
+        "    }\n",
+        "\n",
+        "    NodoToken *actual = *cabeza;\n",
+        "\n",
+        "    while (actual->siguiente != NULL) {\n",
+        "        actual = actual->siguiente;\n",
+        "    }\n",
+        "\n",
+        "    actual->siguiente = nuevo;\n",
+        "}\n",
+        "\n",
+        "int contar_tokens(NodoToken *cabeza) {\n",
+        "    int contador = 0;\n",
+        "\n",
+        "    while (cabeza != NULL) {\n",
+        "        contador++;\n",
+        "        cabeza = cabeza->siguiente;\n",
+        "    }\n",
+        "\n",
+        "    return contador;\n",
+        "}\n",
+        "\n",
+        "void liberar_lista(NodoToken *cabeza) {\n",
+        "    while (cabeza != NULL) {\n",
+        "        NodoToken *siguiente = cabeza->siguiente;\n",
+        "        free(cabeza);\n",
+        "        cabeza = siguiente;\n",
+        "    }\n",
+        "}\n"
       ]
     },
     {
       "cell_type": "markdown",
       "metadata": {
-        "id": "gwFyLUnOn4qB"
+        "id": "AAdXhH99uiNJ"
       },
       "source": [
         "## Fase 3 · El Auditor (10 min)\n",
@@ -271,11 +428,23 @@
     },
     {
       "cell_type": "code",
-      "execution_count": null,
+      "execution_count": 12,
       "metadata": {
-        "id": "VoiyOoRMn4qB"
+        "id": "2PQcYESnuiNJ",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "09720cdb-42e6-4d25-bce4-9fabffc2df1c"
       },
-      "outputs": [],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Overwriting harness_sesion02_c.c\n"
+          ]
+        }
+      ],
       "source": [
         "%%writefile harness_sesion02_c.c\n",
         "/* harness_sesion02_c.c - auditoria automatica de la Sesion 02\n",
@@ -337,22 +506,62 @@
     },
     {
       "cell_type": "code",
-      "execution_count": null,
+      "execution_count": 13,
       "metadata": {
-        "id": "ojIUuHYLn4qC"
+        "id": "5pinSDKXuiNK",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "c2659a11-57cf-4f1a-dbf4-c9620896ed72"
       },
-      "outputs": [],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "=== AUDITORIA SESION 02 - Lista enlazada de tokens en heap ===\n",
+            "Caso                               esperado:              obtenido:              resultado\n",
+            "[ 1] agregar_token(NULL,\"if\")           esperado: if           obtenido: if           OK\n",
+            "[ 2] contar_tokens(3 tokens)            esperado: 3            obtenido: 3            OK\n",
+            "[ 3] orden: segundo token               esperado: dos          obtenido: dos          OK\n",
+            "[ 4] ultimo->siguiente == NULL          esperado: 1            obtenido: 1            OK\n",
+            "[ 5] contar_tokens(NULL)                esperado: 0            obtenido: 0            OK\n",
+            "[ 6] liberar_lista(NULL)                esperado: sin crash    obtenido: sin crash    OK\n",
+            "\n",
+            "RESULTADO: 6/6 pruebas superadas\n",
+            "TODO EN VERDE. Documenta tu auditoria en auditorias/auditoria_sesion02.md\n"
+          ]
+        }
+      ],
       "source": [
         "!gcc -std=c11 -Wall -Wextra -Werror harness_sesion02_c.c artesano_sesion02_c.c -o test_artesano && ./test_artesano"
       ]
     },
     {
       "cell_type": "code",
-      "execution_count": null,
+      "execution_count": 14,
       "metadata": {
-        "id": "FRyM_ZERn4qC"
+        "id": "etS5NIQTuiNK",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "17fb89a3-024b-4da2-ebd3-c30762398736"
       },
-      "outputs": [],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\u001b[01m\u001b[Kia_sesion02_c.c:31:6:\u001b[m\u001b[K \u001b[01;31m\u001b[Kerror: \u001b[m\u001b[Kconflicting types for ‘\u001b[01m\u001b[Kagregar_token\u001b[m\u001b[K’; have ‘\u001b[01m\u001b[Kvoid(NodoToken **, const char *)\u001b[m\u001b[K’\n",
+            "   31 | void \u001b[01;31m\u001b[Kagregar_token\u001b[m\u001b[K(NodoToken **cabeza, const char *lexema) {\n",
+            "      |      \u001b[01;31m\u001b[K^~~~~~~~~~~~~\u001b[m\u001b[K\n",
+            "In file included from \u001b[01m\u001b[Kia_sesion02_c.c:6\u001b[m\u001b[K:\n",
+            "\u001b[01m\u001b[Kapi_sesion02.h:15:12:\u001b[m\u001b[K \u001b[01;36m\u001b[Knote: \u001b[m\u001b[Kprevious declaration of ‘\u001b[01m\u001b[Kagregar_token\u001b[m\u001b[K’ with type ‘\u001b[01m\u001b[KNodoToken *(NodoToken *, const char *)\u001b[m\u001b[K’\n",
+            "   15 | NodoToken *\u001b[01;36m\u001b[Kagregar_token\u001b[m\u001b[K(NodoToken *cabeza, const char *lexema);\n",
+            "      |            \u001b[01;36m\u001b[K^~~~~~~~~~~~~\u001b[m\u001b[K\n"
+          ]
+        }
+      ],
       "source": [
         "!gcc -std=c11 -Wall -Wextra -Werror harness_sesion02_c.c ia_sesion02_c.c -o test_ia && ./test_ia"
       ]
@@ -360,7 +569,7 @@
     {
       "cell_type": "markdown",
       "metadata": {
-        "id": "kKQmwJ0on4qC"
+        "id": "OvIxhY9XuiNK"
       },
       "source": [
         "## Resultado esperado\n",
@@ -378,7 +587,7 @@
     {
       "cell_type": "markdown",
       "metadata": {
-        "id": "AWOkAukJn4qD"
+        "id": "W6JIhv3TuiNK"
       },
       "source": [
         "## Entrega\n",
@@ -402,7 +611,8 @@
       "name": "python3"
     },
     "colab": {
-      "provenance": []
+      "provenance": [],
+      "include_colab_link": true
     }
   },
   "nbformat": 4,
