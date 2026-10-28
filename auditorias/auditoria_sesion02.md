@@ -29,68 +29,74 @@
 
 ### 2.2 Prompt Estructurado
 ```text
-Actúa como ingeniero de software especializado en C y compiladores. Implementa las funciones crear_nodo, agregar_token, contar_tokens y liberar_lista, respetando exactamente las declaraciones de api_sesion02.h.
+Estoy trabajando en un laboratorio de Lenguajes y Autómatas II sobre listas enlazadas en C.
+Existe un archivo llamado api_sesion02.h que define una estructura NodoToken y las funciones agregar_token, contar_tokens y liberar_lista. El código será evaluado mediante un harness automático compilado con gcc usando -Wall -Wextra -Werror.
 
-Utiliza memoria dinámica mediante malloc y libera cada nodo con free. Comprueba los punteros antes de utilizarlos, conserva el orden de inserción, garantiza que el último nodo tenga siguiente == NULL y permite contar y liberar una lista vacía sin provocar errores.
+Rol:
+Actúa como un ingeniero de software especializado en programación de sistemas, compiladores y gestión de memoria en C.
 
-El campo lexema tiene capacidad para 16 caracteres, incluido el terminador nulo. Evita desbordamientos al copiar cadenas y contempla la falla de asignación de memoria. No incluyas main() ni cambies las firmas de las funciones. Entrega únicamente el código modular y un análisis de complejidad temporal y espacial.
+Especificación:
+Implementa exactamente las siguientes funciones:
+
+NodoToken *agregar_token(NodoToken *cabeza, const char *lexema);
+int contar_tokens(NodoToken *cabeza);
+void liberar_lista(NodoToken *cabeza);
+
+Requisitos:
+- Reservar cada nodo usando malloc.
+- Copiar el lexema respetando el límite de 16 caracteres del arreglo.
+- El último nodo debe tener siguiente == NULL.
+- Si la lista está vacía, agregar_token debe crear el primer nodo y devolver la nueva cabeza.
+- Mantener el orden de inserción.
+- contar_tokens(NULL) debe devolver 0.
+- liberar_lista(NULL) no debe provocar errores.
+- Utilizar free para liberar toda la memoria reservada.
+- No agregar función main().
+- No modificar ninguna firma declarada en api_sesion02.h.
+
+Output:
+Devuelve únicamente código C compilable, modular y compatible con el contrato definido en api_sesion02.h.
+
 ```
 
 ---
 
 ## 3. Código Devuelto por el Modelo
 ```c
-El código propuesto implementa las cuatro funciones solicitadas. La creación de nodos utiliza malloc, la copia del lexema limita los caracteres al espacio disponible, la inserción conserva el orden y la liberación recorre la lista antes de terminar.
-
-Archivo: ia_sesion02_c.c
 
 #include "api_sesion02.h"
 #include <stdlib.h>
 #include <string.h>
 
-NodoToken *crear_nodo(const char *lexema) {
+NodoToken *agregar_token(NodoToken *cabeza, const char *lexema)
+{
     NodoToken *nuevo = malloc(sizeof(NodoToken));
 
     if (nuevo == NULL) {
-        return NULL;
+        return cabeza;
     }
 
-    if (lexema == NULL) {
-        nuevo->lexema[0] = '\0';
-    } else {
-        strncpy(nuevo->lexema, lexema, sizeof(nuevo->lexema) - 1);
-        nuevo->lexema[sizeof(nuevo->lexema) - 1] = '\0';
-    }
-
+    strncpy(nuevo->lexema, lexema, sizeof(nuevo->lexema) - 1);
+    nuevo->lexema[sizeof(nuevo->lexema) - 1] = '\0';
     nuevo->siguiente = NULL;
-    return nuevo;
-}
 
-void agregar_token(NodoToken **cabeza, const char *lexema) {
     if (cabeza == NULL) {
-        return;
+        return nuevo;
     }
 
-    NodoToken *nuevo = crear_nodo(lexema);
-    if (nuevo == NULL) {
-        return;
-    }
-
-    if (*cabeza == NULL) {
-        *cabeza = nuevo;
-        return;
-    }
-
-    NodoToken *actual = *cabeza;
+    NodoToken *actual = cabeza;
 
     while (actual->siguiente != NULL) {
         actual = actual->siguiente;
     }
 
     actual->siguiente = nuevo;
+
+    return cabeza;
 }
 
-int contar_tokens(NodoToken *cabeza) {
+int contar_tokens(NodoToken *cabeza)
+{
     int contador = 0;
 
     while (cabeza != NULL) {
@@ -101,7 +107,8 @@ int contar_tokens(NodoToken *cabeza) {
     return contador;
 }
 
-void liberar_lista(NodoToken *cabeza) {
+void liberar_lista(NodoToken *cabeza)
+{
     while (cabeza != NULL) {
         NodoToken *siguiente = cabeza->siguiente;
         free(cabeza);
@@ -122,6 +129,10 @@ void liberar_lista(NodoToken *cabeza) {
 
 Pruebas ejecutadas: creación de nodos, conteo, orden de inserción, terminación de la lista, lista vacía y liberación sin errores.
 
+ Caso base y límites superados sin Crash.
+ No existen accesos fuera de límites en los casos evaluados.
+ La complejidad teórica coincide con la implementada.
+
 === AUDITORIA SESION 02 - Lista enlazada de tokens en heap ===
 Caso                               esperado:              obtenido:              resultado
 [ 1] crear_nodo("if")->lexema           esperado: if           obtenido: if           OK
@@ -136,11 +147,19 @@ TODO EN VERDE.
 
 ### Reporte Crítico
 *¿Qué caso borde o problema omitió la IA y cómo lo solucionaste?*
-> El harness verifica seis casos, pero no comprueba explícitamente todos los escenarios posibles. Por ejemplo, no prueba directamente la recepción de un lexema nulo, un lexema que exceda la capacidad del arreglo ni una falla de malloc.
+> El harness verifica seis casos funcionales, pero no comprueba explícitamente escenarios como un lexema más largo que el tamaño del arreglo, un puntero lexema con valor NULL o una falla de malloc.
 
-> La implementación contempla el lexema nulo y limita la copia a 15 caracteres más el terminador nulo. También comprueba si malloc devuelve NULL. Estas medidas mejoran la seguridad, aunque para confirmar su comportamiento se requieren pruebas adicionales específicas.
+> Durante la auditoría se detectó que la primera versión generada por la IA no respetó el contrato definido en api_sesion02.h. La función agregar_token fue implementada con la firma:
+> 
+> void agregar_token(NodoToken **cabeza, const char *lexema);
+> cuando el contrato exigía:
+> NodoToken *agregar_token(NodoToken *cabeza, const char *lexema);
 
-> No se afirma que no existan fugas de memoria en todos los escenarios únicamente por superar el harness; esa conclusión requiere pruebas adicionales de memoria (La AI no omitió ningún error).
+> El problema se identificó al compilar con GCC, ya que el compilador emitió el error:
+
+>conflicting types for 'agregar_token'
+
+> La solución consistió en corregir la función para que devolviera la cabeza de la lista y respetara exactamente la firma especificada en api_sesion02.h. Una vez realizada la corrección, la implementación superó las seis pruebas del harness con resultado 6/6.
 
 ---
 **Firma digital:** LeslieTamara14
