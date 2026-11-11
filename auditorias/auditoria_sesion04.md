@@ -11,7 +11,7 @@
 ## 1. Fase 1: El Artesano (Dificultad Manual)
 *Reto:* Estructura de nodo binario (ASTNode)  
 *Describe qué problema o restricción de memoria/sintaxis identificaste al codificar a mano:*
-> Al codificar manualmente, fue fundamental recordar el uso de malloc para reservar memoria dinámica en el heap para cada nodo, asegurando que los punteros a los hijos izquierdo y derecho (izq, der) se inicializaran correctamente para evitar accesos a memoria indefinida o fallos de segmentación. Asimismo, se debió considerar el caso base de la función recursiva evaluar cuando el nodo recibido es NULL.
+> Primero intenté hacer el código por mi cuenta. Cuando algo no me quedaba claro o no sabía cómo seguir, consultaba a la IA para resolver la duda y continuar. Con ese apoyo fui entendiendo cómo reservar memoria con malloc, guardar los datos de cada nodo y conectar sus hijos. Los números guardan su valor y las operaciones guardan el operador y las direcciones de sus dos hijos. Hay que respetar cuál es el izquierdo y cuál es el derecho, sobre todo en la resta. También hay que revisar si el nodo es NULL antes de usar sus datos.
 
 ---
 
@@ -27,12 +27,25 @@
 
 ### 2.2 Prompt Estructurado
 ```text
-Desarrollo de un compilador en C99 bajo estándares estrictos (-Wall -Wextra -Werror).
+Contexto: Estoy haciendo la sesión 04 de Lenguajes y Autómatas II
+en Google Colab. El programa usa C y se prueba con GCC.
 
-Rol: Ingeniero experto en compiladores y estructuras de datos en C.
-Especificación: Escribe las funciones crear_numero(int v), crear_binario(char op, ASTNode *izq, ASTNode *der), y evaluar(ASTNode *n) basadas en la estructura ASTNode provista en api_sesion04.h. La función evaluar debe manejar nodos numéricos y operaciones binarias (+, -, *), evaluando recursivamente ambos hijos y retornando -1 si el nodo de entrada es NULL sin provocar fallos de segmentación.
+Rol: Ayúdame como tutor de programación. Usa instrucciones básicas
+que pueda entender y explicar.
 
-Output: Únicamente el código en C necesario para cumplir la interfaz, sin incluir main().
+Especificación: Incluye api_sesion04.h y respeta estas firmas:
+ASTNode *crear_numero(int v);
+ASTNode *crear_binario(char op, ASTNode *izq, ASTNode *der);
+int evaluar(ASTNode *n);
+
+Reserva cada nodo con malloc. Usa NODO_NUM para números y NODO_BINOP
+para operaciones. Guarda correctamente el hijo izquierdo y el derecho.
+Evalúa ambos hijos antes de aplicar +, - o *.
+evaluar(NULL) debe devolver -1.
+Debe compilar con -std=c11 -Wall -Wextra -Werror.
+
+Output: Entrega el código de ia_sesion04_c.c sin main(), usando
+stdlib.h. Explica brevemente cuánto trabajo hace al evaluar el árbol.
 ```
 
 ---
@@ -43,39 +56,37 @@ Output: Únicamente el código en C necesario para cumplir la interfaz, sin incl
 #include <stdlib.h>
 
 ASTNode *crear_numero(int v) {
-    ASTNode *n = malloc(sizeof(ASTNode));
-    if (!n) return NULL;
-    n->tipo = NODO_NUM;
-    n->valor = v;
-    n->op = '\0';
-    n->izq = NULL;
-    n->der = NULL;
-    return n;
+    ASTNode *nodo = (ASTNode *)malloc(sizeof(ASTNode));
+    nodo->tipo = NODO_NUM;
+    nodo->valor = v;
+    nodo->op = 0;
+    nodo->izq = NULL;
+    nodo->der = NULL;
+    return nodo;
 }
 
 ASTNode *crear_binario(char op, ASTNode *izq, ASTNode *der) {
-    ASTNode *n = malloc(sizeof(ASTNode));
-    if (!n) return NULL;
-    n->tipo = NODO_BINOP;
-    n->valor = 0;
-    n->op = op;
-    n->izq = izq;
-    n->der = der;
-    return n;
+    ASTNode *nodo = (ASTNode *)malloc(sizeof(ASTNode));
+    nodo->tipo = NODO_BINOP;
+    nodo->valor = 0;
+    nodo->op = op;
+    nodo->izq = izq;
+    nodo->der = der;
+    return nodo;
 }
 
 int evaluar(ASTNode *n) {
-    if (!n) return -1;
+    if (n == NULL) return -1;
     if (n->tipo == NODO_NUM) return n->valor;
-    
-    int izq = evaluar(n->izq);
-    int der = evaluar(n->der);
-    
+
+    int a = evaluar(n->izq);
+    int b = evaluar(n->der);
+
     switch (n->op) {
-        case '+': return izq + der;
-        case '-': return izq - der;
-        case '*': return izq * der;
-        default: return -1;
+        case '+': return a + b;
+        case '-': return a - b;
+        case '*': return a * b;
+        default:  return -1;
     }
 }
 ```
@@ -89,22 +100,56 @@ int evaluar(ASTNode *n) {
 * [ ] No existen accesos fuera de límites ni *Memory Leaks*.
 * [ ] La complejidad teórica coincide con la implementada.
 
-Salida del Harness esperado
+
+Pruebas ejecutadas: Evaluar 42, evaluar 3+5*2, revisar el hijo izquierdo, revisar el operador, evaluar NULL y evaluar 10-4.
+
+Los resultados siguientes corresponden a las salidas de Colab compartidas. Ambas versiones obtuvieron 6/6 pruebas superadas.
+
+Salida del harness — Artesano
 === AUDITORIA SESION 04 - Nodo binario de AST ===
-Caso                                   esperado:        obtenido:        resultado
-[ 1] evaluar(nodo 42)                  esperado: 42     obtenido: 42     OK
-[ 2] evaluar(3+5*2)                    esperado: 13     obtenido: 13     OK
-[ 3] hijo izquierdo de (* 5 2)         esperado: 5      obtenido: 5      OK
-[ 4] operador guardado                 esperado: *      obtenido: *      OK
-[ 5] evaluar(NULL)                     esperado: -1     obtenido: -1     OK
-[ 6] evaluar(10-4)                     esperado: 6      obtenido: 6      OK
+Caso                               esperado:              obtenido:              resultado
+[ 1] evaluar(nodo 42)                   esperado: 42           obtenido: 42           OK
+[ 2] evaluar(3+5*2)                     esperado: 13           obtenido: 13           OK
+[ 3] hijo izquierdo de (* 5 2)          esperado: 5            obtenido: 5            OK
+[ 4] operador guardado                  esperado: *            obtenido: *            OK
+[ 5] evaluar(NULL)                      esperado: -1           obtenido: -1           OK
+[ 6] evaluar(10-4)                      esperado: 6            obtenido: 6            OK
+
+RESULTADO: 6/6 pruebas superadas
+TODO EN VERDE. 
+
+Salida del harness — Científico
+=== AUDITORIA SESION 04 - Nodo binario de AST ===
+Caso                               esperado:              obtenido:              resultado
+[ 1] evaluar(nodo 42)                   esperado: 42           obtenido: 42           OK
+[ 2] evaluar(3+5*2)                     esperado: 13           obtenido: 13           OK
+[ 3] hijo izquierdo de (* 5 2)          esperado: 5            obtenido: 5            OK
+[ 4] operador guardado                  esperado: *            obtenido: *            OK
+[ 5] evaluar(NULL)                      esperado: -1           obtenido: -1           OK
+[ 6] evaluar(10-4)                      esperado: 6            obtenido: 6            OK
 
 RESULTADO: 6/6 pruebas superadas
 TODO EN VERDE.
 
+- [x] Los seis casos del harness pasaron sin que el programa se cerrara por un error.
+- [ ] No existen accesos fuera de límites ni fugas de memoria: pendiente de comprobar con una herramienta de memoria. El harness no lo revisa.
+- [x] La complejidad teórica coincide con el código: crear un nodo tarda O(1). Evaluar tarda O(n), porque visita cada nodo una vez. La recursión ocupa O(h), donde h es la altura del árbol.
+
 ### Reporte Crítico
 *¿Qué caso borde o problema omitió la IA y cómo lo solucionaste?*
-> La versión generada inicialmente por la IA omitió validar de forma explícita el manejo seguro ante posibles fallos en la asignación dinámica de memoria (malloc), lo cual podía causar desreferenciación de punteros nulos si el heap se agotaba. Se incorporaron verificaciones defensivas (if (!n) return NULL;) para garantizar la robustez del código ante limitaciones del sistema operativo.
+> El código pasó las seis pruebas, pero al revisarlo encontré que no comprueba si malloc pudo reservar memoria. Si devuelve NULL, el programa intentaría guardar datos en una dirección que no es válida. Este problema también aparece en la versión Artesano y no lo detecta el harness, porque no provoca una falta de memoria.
+
+La corrección propuesta es agregar esta revisión después de cada malloc, antes de usar nodo->:
+
+```c
+if (nodo == NULL) {
+    return NULL;
+}
+```
+
+> Esta corrección queda pendiente de aplicar y volver a ejecutar en Colab. Las salidas de arriba pertenecen al código mostrado, que todavía no incluye esa revisión.
+
+> También observé que el harness no libera los nodos con free. Por eso, obtener 6/6 no demuestra que no haya fugas de memoria. Al terminar de usar un árbol, se deben liberar primero sus hijos y después el nodo. Esa comprobación queda pendiente.
 
 ---
 **Firma digital:** LeslieTamara14
