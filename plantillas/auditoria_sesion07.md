@@ -26,10 +26,6 @@
 
 ### 2.2 Prompt Estructurado
 ```text
-[Pega aquí el prompt formal que redactaste para la IA]
-```
-
----
 Actúa como programador de un evaluador de AST en C. Usa api_sesion07.h
 e implementa int evaluar(ASTNode *n, int *error). Si n es nulo marca
 *error = 2 y devuelve 0. Si n->tipo es NODO_NUM marca *error = 0 y
@@ -41,7 +37,9 @@ desconocido: *error = 2. El esqueleto solo incluye "api_sesion07.h";
 no añadas otros includes. Entrega código sin main(), compilable con
 GCC usando -std=c11 -Wall -Wextra -Werror, e indica la complejidad
 en tiempo y espacio.
+```
 
+---
 
 ## 3. Código Devuelto por el Modelo
 ```c
@@ -87,6 +85,22 @@ int evaluar(ASTNode *n, int *error) {
 * ☑ Caso base y límites superados sin Crash.
 * ☑ No existen accesos fuera de límites ni Memory Leaks.
 * ☑ La complejidad teórica coincide con la implementada.
+
+```text
+=== AUDITORIA SESION 07 - Evaluador recursivo con deteccion de errores ===
+Caso                               esperado:              obtenido:              resultado
+[ 1] (2+3)*4                            esperado: 20           obtenido: 20           OK
+[ 2] 7/0 -> error 1                     esperado: 1            obtenido: 1            OK
+[ 3] 7%0 -> error 1                     esperado: 1            obtenido: 1            OK
+[ 4] arbol NULL -> error 2              esperado: 2            obtenido: 2            OK
+[ 5] 10-2-3                             esperado: 5            obtenido: 5            OK
+[ 6] (8/2)+1                            esperado: 5            obtenido: 5            OK
+
+RESULTADO: 6/6 pruebas superadas
+TODO EN VERDE. Documenta tu auditoria en auditorias/auditoria_sesion07.md
+```
+RESULTADO: 6/6 pruebas superadas
+TODO EN VERDE. Documenta tu auditoria en auditorias/auditoria_sesion07.md
 ### Reporte Crítico
 *¿Qué caso borde o problema omitió la IA y cómo lo solucionaste?*
 > La IA omitió dos cosas. Primero, devolvió if (n == NULL) e if (error == NULL) sin considerar que el esqueleto del Científico solo incluye "api_sesion07.h", header que no define NULL. El harness no detecta esto porque el error es de compilación, no de ejecución: gcc -Wall -Wextra -Werror reportó 'NULL' undeclared en la línea 11 y test_ia no se generó. Lo solucioné reemplazando NULL por 0 en ambas comparaciones de puntero, sin añadir <stddef.h> ni modificar el header.
@@ -95,4 +109,4 @@ int evaluar(ASTNode *n, int *error) {
 > 
 
 ---
-**Firma digital:** [Usuario de GitHub]
+**Firma digital:** LeslieTamara14
