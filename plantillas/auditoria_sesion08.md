@@ -86,6 +86,7 @@ const char *nombre_tipo(Tipo t) {
 * ☑ No existen accesos fuera de límites ni *Memory Leaks*.
 * ☑ La complejidad teórica coincide con la implementada.
 
+```text
 === AUDITORIA SESION 08 - Reglas de promocion y perdida ===
 Caso                               esperado:              obtenido:              resultado
 [ 1] promover(CHAR,INT)                 esperado: int          obtenido: int          OK
@@ -94,6 +95,10 @@ Caso                               esperado:              obtenido:             
 [ 4] promover(ERROR,INT)                esperado: error        obtenido: error        OK
 [ 5] hay_perdida(CHAR,INT)              esperado: 1            obtenido: 1            OK
 [ 6] hay_perdida(INT,CHAR)              esperado: 0            obtenido: 0            OK
+
+RESULTADO: 6/6 pruebas superadas
+TODO EN VERDE. Documenta tu auditoria en auditorias/auditoria_sesion08.md
+```
 
 RESULTADO: 6/6 pruebas superadas
 TODO EN VERDE. Documenta tu auditoria en auditorias/auditoria_sesion08.md
