@@ -2,8 +2,8 @@
 **Materia:** Lenguajes y Autómatas II (SCD-1016)  
 **Tema:** Evaluación de Expresiones Aritméticas  
 **Docente Titular:** MCC. Iván Márquez Larios (`ijmarquezl`)  
-**Estudiante:** [Nombre Completo]  
-**Matrícula:** [No. de Control]  
+**Estudiante:** Leslie Tamara Canul Llanes
+**Matrícula:** 24531370
 **Track:** [ C | Rust ]  
 
 ---
@@ -11,7 +11,11 @@
 ## 1. Fase 1: El Artesano (Dificultad Manual)
 *Reto:* Evaluador recursivo de operaciones  
 *Describe qué problema o restricción de memoria/sintaxis identificaste al codificar a mano:*
-> 
+> Desreferencia de puntero nulo (memoria). El primer borrador leía n->tipo antes de comprobar n == NULL. En el caso 4 del harness (evaluar(NULL, &e)) eso habría provocado SIGSEGV. Lo corregí moviendo if (n == NULL) al inicio absoluto de la función, antes de cualquier acceso a n->tipo o n->valor.
+
+> División/módulo entre cero (sintaxis + UB). En C, izq / der con der == 0 no devuelve un valor "infinito": aborta con SIGFPE, y para % el estándar C11 declara comportamiento indefinido. Por eso la verificación if (der == 0) debe ejecutarse antes de operar, no después. Ese es el corazón de la sesión: detectar el error estáticamente antes de que el proceso se caiga.
+
+> Propagación del error sin recalcular el padre. Si un hijo marca *error = 1 o *error = 2, el padre no debe operar con el 0 devuelto por el hijo. La solución fue if (*error != 0) return 0; inmediatamente después de cada llamada recursiva, antes del segundo hijo y antes del operador.
 
 ---
 
