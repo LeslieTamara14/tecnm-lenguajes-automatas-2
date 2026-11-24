@@ -85,7 +85,7 @@ const char *buscar(const Ambito *ambito, const char *nombre) {
 * [✔] Caso base y límites superados sin *Crash*.
 * [✔] No existen accesos fuera de límites ni *Memory Leaks*.
 * [✔] La complejidad teórica coincide con la implementada.
-* 
+
 === AUDITORIA SESION 13 - Salida del Harness ===
 Caso                               esperado:              obtenido:              resultado
 [ 1] declarar(&g, "x")                  esperado: 1            obtenido: 1            OK
